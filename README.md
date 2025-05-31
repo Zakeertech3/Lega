@@ -35,27 +35,94 @@ Here's what a typical trial simulation looks like:
 
 ## 🏗️ How It Works (RAG Architecture)
 
-### The Data Pipeline
+### System Architecture Overview
+
 ```
-PDF Documents → Section Extraction → Vector Embeddings → FAISS Index → Semantic Search
+┌──────────────────────────┐
+│    IPC PDF (raw)        │
+└────────────┬─────────────┘
+             │
+  [Split by section/paragraph]
+             │
+             ▼
+┌──────────────────────────┐
+│   Chunks & Metadata      │  ──► (Embed each chunk)  
+└────────────┬─────────────┘
+             │
+             ▼
+┌──────────────────────────┐       ┌──────────────────────────┐
+│   Vector Database         │◄─────┤   Embedding Model       │
+│  (IPC embeddings stored)  │─────►│ (e.g., Legal-BERT)      │
+└────────────┬─────────────┘       └──────────────────────────┘
+             │
+             ▼
+        [RAG Retriever]
+             │        \
+             │         \ (serves as a "tool" to all agents)
+             │
+             ▼
+┌───────────────────┐       ┌─────────────────────┐       ┌─────────────────────┐
+│  Prosecution      │       │   Defense           │       │  Cross-Exam         │
+│  Argument Agent   │       │  Argument Agent     │       │  / Rebuttal Agent   │
+└─────────┬─────────┘       └────────┬────────────┘       └─────────┬───────────┘
+          │  (calls Retriever)        │  (calls Retriever)         │ (calls Retriever)
+          │                          │                            │
+          ▼                          ▼                            ▼
+  "Prosecution Argument"      "Defense Argument"         "Cross-Exam Questions"
+          └────────────────────────────────────────────────────────────┐
+                                                                      │
+                                                                      ▼
+                                                    ┌──────────────────────────┐
+                                                    │  Judge / Adjudicator     │
+                                                    │       Agent              │
+                                                    └─────────┬───────────────┘
+                                                              │
+                                                              ▼
+                                                     "Final Written Judgment"
 ```
 
-We process three core legal documents:
+### The Data Pipeline
+
+The system processes three core legal documents:
 - **Indian Penal Code (IPC)**: Criminal offenses and punishments
 - **Code of Criminal Procedure (CrPC)**: Court procedures and processes
 - **Indian Evidence Act**: Rules for evidence admissibility
 
+**Processing Steps:**
+1. **PDF Ingestion**: Extract raw text from legal documents using `pdfplumber`
+2. **Section Parsing**: Split documents by legal sections using regex patterns to identify section boundaries
+3. **Metadata Extraction**: Structure sections with IDs, titles, and content into JSON format
+4. **Vector Embedding**: Convert text to semantic embeddings using Sentence Transformers (`bert-base-nli-mean-tokens`)
+5. **Index Creation**: Build FAISS indices for fast similarity search and store them locally
+
 ### The Retrieval System
-- **Vector Database**: FAISS for high-performance similarity search
-- **Embeddings**: Sentence Transformers (`bert-base-nli-mean-tokens`) for semantic understanding
-- **Search Strategy**: Each AI agent retrieves relevant legal sections based on the crime scenario
+
+- **Vector Database**: FAISS for high-performance similarity search with L2 distance metrics
+- **Embeddings**: Sentence Transformers (`bert-base-nli-mean-tokens`) for semantic understanding of legal text
+- **Shared Retriever**: Single `LegalRetriever` class serves all agents as a tool for consistent legal document access
+- **Search Strategy**: Each AI agent retrieves relevant legal sections based on the crime scenario using configurable top-k parameters
+- **Multi-Document Support**: Agents can search across IPC, CrPC, and Evidence Act simultaneously for comprehensive legal coverage
 
 ### The Generation System
+
 Four specialized AI agents powered by Groq's LLaMA 3 70B:
-- **Prosecution**: Builds cases citing relevant criminal law sections
-- **Defense**: Finds legal defenses and mitigating circumstances
-- **Cross-Examiner**: Identifies weaknesses and asks probing questions  
-- **Judge**: Synthesizes arguments and renders verdict with legal reasoning
+
+- **Prosecution Agent**: Builds cases citing relevant criminal law sections, focuses on offense elements and procedural requirements
+- **Defense Agent**: Finds legal defenses and mitigating circumstances using IPC exceptions and Evidence Act provisions
+- **Cross-Examiner Agent**: Identifies weaknesses and asks probing questions that expose logical inconsistencies between arguments
+- **Judge Agent**: Synthesizes arguments and renders verdict with comprehensive legal reasoning, weighing burden of proof
+
+**Agent Configuration:**
+```python
+agent_temperatures = {
+    "prosecution": 0.3,     # Factual, structured arguments
+    "defense": 0.3,         # Thorough, defensive reasoning  
+    "cross_examiner": 0.5,  # Creative, probing questions
+    "judge": 0.2            # Balanced, careful deliberation
+}
+```
+
+Each agent uses specialized prompts and retrieval strategies tailored to their courtroom role, ensuring realistic and legally sound arguments throughout the trial simulation.
 
 ## 🛠️ Tech Stack
 
