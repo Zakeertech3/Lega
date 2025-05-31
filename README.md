@@ -152,7 +152,7 @@ Each agent uses specialized prompts and retrieval strategies tailored to their c
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/ipc-courtroom-simulator.git
+git clone https://github.com/Zakeetech3/lega.git
 cd ipc-courtroom-simulator
 ```
 
