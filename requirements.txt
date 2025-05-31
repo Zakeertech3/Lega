@@ -1,0 +1,15 @@
+streamlit
+python-dotenv
+PyYAML
+openai
+pdfplumber
+pymupdf
+sentence-transformers
+faiss-cpu
+langchain
+langchain-community
+pyautogen
+loguru
+rich
+tqdm
+groq

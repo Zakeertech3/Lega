@@ -15,7 +15,7 @@ evidence_act_sections_path: "../data/processed/evidence_act_sections.json"
 vectorstore_path: "../data/vectorstore"
 log_level: "INFO"
 
-# Agent Settings (optional)
+# Agent Settings 
 agent_settings:
   prosecution:
     top_k: 3
@@ -26,7 +26,7 @@ agent_settings:
   judge:
     top_k: 3
 
-# Prompt Settings (optional)
+# Prompt Settings 
 prompt:
   max_tokens: 600
   temperature:
