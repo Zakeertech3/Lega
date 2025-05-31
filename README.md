@@ -22,8 +22,10 @@ Traditional AI chatbots fail catastrophically in legal contexts because they hal
 - **🔍 Smart Legal Search**: FAISS-powered semantic search across Indian legal codes
 - **📱 Interactive Interface**: Clean Streamlit UI with progress tracking and downloadable transcripts
 - **🎓 Educational Focus**: Designed for law students and legal education
+  
+## 🚀 Quick Demo
 
-## 🚀 Quick Demo : https://drive.google.com/file/d/1KNz88N2nn6JULJ5PrRIwSQTxxWuC2Ejg/view?usp=sharing
+[![Demo Video](https://img.shields.io/badge/📺_Watch_Demo-Google_Drive-blue?style=for-the-badge)](https://drive.google.com/file/d/1KNz88N2nn6JULJ5PrRIwSQTxxWuC2Ejg/view?usp=sharing)
 
 Here's what a typical trial simulation looks like:
 
