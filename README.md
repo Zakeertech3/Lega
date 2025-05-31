@@ -132,8 +132,8 @@ Each agent uses specialized prompts and retrieval strategies tailored to their c
 - `pdfplumber` - Extract text from legal PDF documents
 
 **LLM Integration:**
-- `groq` - High-performance LLM inference (LLaMA 3 70B)
-- `openai` - Compatible API client for easy model switching
+- `groq` - High-performance LLM inference (LLaMA 3 70B via `llama3-70b-8192` model)
+- `openai` - OpenAI-compatible API client for Groq integration and easy model switching
 
 **Frontend & Utils:**
 - `streamlit` - Interactive web interface
@@ -180,20 +180,56 @@ streamlit run frontend/streamlit_app.py
 
 ## 📁 Project Structure
 
-```
-ipc_courtroom_simulator/
-├── backend/
-│   ├── agents/              # AI agents for different courtroom roles
-│   ├── core.py             # Main simulation orchestrator
-│   ├── ingest.py           # PDF processing and section extraction
-│   ├── embedding_manager.py # FAISS vector store creation
-│   └── retriever.py        # Legal document search
-├── frontend/
-│   └── streamlit_app.py    # Web interface
+```ipc_courtroom_simulator/
+│
 ├── data/
-│   ├── processed/          # Extracted legal sections (JSON)
-│   └── vectorstore/        # FAISS indices
-└── tests/                  # Unit tests for all components
+│   ├── ipc_raw.pdf
+│   ├── crpc_raw.pdf
+│   ├── evidence_act_raw.pdf
+│   │
+│   ├── processed/
+│   │   ├── ipc_sections.json
+│   │   ├── crpc_sections.json
+│   │   └── evidence_act_sections.json
+│   │
+│   └── vectorstore/
+│       ├── ipc_vectorstore.faiss
+│       ├── crpc_vectorstore.faiss
+│       └── evidence_act_vectorstore.faiss
+│
+├── backend/
+│   ├── agents/
+│   │   ├── prosecution_agent.py
+│   │   ├── defense_agent.py
+│   │   ├── cross_examiner_agent.py
+│   │   └── judge_agent.py
+│   │
+│   ├── core.py               # CourtroomSimulator class
+│   ├── ingest.py             # PDF parsing & section extraction
+│   ├── embedding_manager.py  # FAISS index creation
+│   ├── retriever.py          # LegalRetriever class
+│   │
+│   └── utils/
+│       ├── logger.py
+│       ├── helpers.py
+│       ├── prompt_templates.py
+│       └── config_loader.py
+│
+├── frontend/
+│   └── streamlit_app.py      # Streamlit UI
+│
+├── config/
+│   └── config.yaml            # Configuration settings
+│
+├── .env                       # Stores Groq API key
+├── requirements.txt           # Python dependencies
+│
+└── tests/                     # ✅ New: Folder for all test files
+    ├── test_ingest.py         # Tests for PDF ingestion
+    ├── test_embedding_manager.py  # Tests for FAISS embedding generation
+    ├── test_retriever.py      # Tests for legal retrieval logic
+    ├── test_agents.py          # Tests for Prosecution, Defense, etc.
+    ├── test_core.py           # Tests for courtroom flow
 ```
 
 ## 🎯 Use Cases
@@ -206,13 +242,17 @@ ipc_courtroom_simulator/
 ## 🔬 Technical Details
 
 ### Model Configuration
-Each agent uses different parameters optimized for their role:
+
+This project uses Groq API with the `llama3-70b-8192` model. Each agent uses different parameters optimized for their role:
+
 ```python
 prosecution: temperature=0.3  # Factual, structured arguments
 defense: temperature=0.3      # Thorough, defensive reasoning
 cross_examiner: temperature=0.5  # Creative, probing questions
 judge: temperature=0.2        # Balanced, careful deliberation
 ```
+
+**Note**: This project uses Groq API with models like `llama3-70b-8192`. You can also integrate local LLMs (e.g., via Ollama or LM Studio) by modifying the agent files to use different API endpoints or local model servers.
 
 ### Retrieval Strategy
 ```python
@@ -243,7 +283,7 @@ Tests cover:
 
 ## 🤝 Contributing
 
-We welcome contributions! Here are ways to help:
+Contributors are welcome! Here are ways to help:
 - Add support for more legal documents
 - Improve agent reasoning capabilities
 - Enhance the user interface
@@ -256,11 +296,6 @@ Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting pul
 
 This project is open source and available under the [MIT License](LICENSE).
 
-## 🙏 Acknowledgments
-
-- Legal document processing inspired by various open-source legal tech projects
-- RAG architecture follows best practices from LangChain and LlamaIndex communities
-- Special thanks to the Sentence Transformers and FAISS teams for making semantic search accessible
 
 ---
 
