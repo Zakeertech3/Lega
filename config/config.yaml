@@ -1,0 +1,36 @@
+# config/config.yaml
+
+# Model Settings
+embedding_model: "bert-base-nli-mean-tokens"  # For IPC/CrPC/Evidence Act section embeddings
+
+# Groq API Settings
+groq:
+  model: "llama3-70b-8192"
+  base_url: "https://api.groq.com/openai/v1" 
+
+# File Paths
+ipc_sections_path: "../data/processed/ipc_sections.json"
+crpc_sections_path: "../data/processed/crpc_sections.json"
+evidence_act_sections_path: "../data/processed/evidence_act_sections.json"
+vectorstore_path: "../data/vectorstore"
+log_level: "INFO"
+
+# Agent Settings (optional)
+agent_settings:
+  prosecution:
+    top_k: 3
+  defense:
+    top_k: 3
+  cross_examiner:
+    top_k: 2
+  judge:
+    top_k: 3
+
+# Prompt Settings (optional)
+prompt:
+  max_tokens: 600
+  temperature:
+    prosecution: 0.3
+    defense: 0.3
+    cross_examiner: 0.5
+    judge: 0.2
