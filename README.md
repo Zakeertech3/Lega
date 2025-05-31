@@ -144,7 +144,7 @@ Each agent uses specialized prompts and retrieval strategies tailored to their c
 
 ### Why These Choices?
 
-**FAISS over cloud vector DBs**: We wanted local deployment for sensitive legal data and offline classroom use.
+**FAISS over cloud vector DBs**: I wanted local deployment for sensitive legal data and offline classroom use.
 
 **Sentence Transformers**: Better for domain-specific legal text than general-purpose embeddings, plus works offline.
 
@@ -292,7 +292,7 @@ Contributors are welcome! Here are ways to help:
 - Add more comprehensive tests
 - Optimize retrieval performance
 
-Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting pull requests.
+Please read the [Contributing Guidelines](CONTRIBUTING.md) before submitting pull requests.
 
 ## 📄 License
 
